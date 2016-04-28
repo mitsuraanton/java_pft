@@ -43,6 +43,7 @@ public class ApplicationManager {
     }
 
     public void stop() {
+        wd.close();
         wd.quit();
     }
 
