@@ -1,14 +1,12 @@
 package ru.stqa.pft.addressbook.appmanager;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import ru.stqa.pft.addressbook.model.ContactData;
-import ru.stqa.pft.addressbook.model.GroupData;
+import ru.stqa.pft.addressbook.model.Contacts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,9 +84,52 @@ public class ContactHelper extends HelperBase {
         for (WebElement element : elements){
             String lastName = element.findElement(By.xpath(".//td[2]")).getText();
             String firstName = element.findElement(By.xpath(".//td[3]")).getText();
-            ContactData contact = new ContactData(firstName, lastName, null, null);
-            contacts.add(contact);
+            int id = Integer.parseInt(element.findElement(By.tagName("input")).getAttribute("id"));
+            contacts.add(new ContactData().withId(id).withLastname(lastName).withFirstname(firstName));
         }
         return contacts;
+    }
+
+    private Contacts contactCache = null;
+
+    public Contacts all() {
+        if (contactCache != null){
+            return new Contacts(contactCache);
+        }
+        contactCache = new Contacts();
+        List<WebElement> elements = wd.findElements(By.name("entry"));
+        for (WebElement element : elements){
+            String lastName = element.findElement(By.xpath(".//td[2]")).getText();
+            String firstName = element.findElement(By.xpath(".//td[3]")).getText();
+            int id = Integer.parseInt(element.findElement(By.tagName("input")).getAttribute("id"));
+            contactCache.add(new ContactData().withId(id).withLastname(lastName).withFirstname(firstName));
+        }
+        return new Contacts(contactCache);
+    }
+
+    public void selectContactById(int id) {
+        wd.findElement(By.cssSelector("input[id='" + id + "']")).click();
+    }
+
+    public void create(ContactData contact) {
+        fillContactForm(contact, true);
+        submitContactCreation();
+        contactCache = null;
+        gotoHomePage();
+    }
+
+    public void modify(Contacts before, ContactData contact) {
+        initContactModification(before.size() - 1);
+        fillContactForm(contact, false);
+        submitContactModification();
+        contactCache = null;
+        gotoHomePage();
+    }
+
+    public void delete(ContactData contact) {
+        selectContactById(contact.getId());
+        deleteSelectedContacts();
+        contactCache = null;
+        gotoHomePage();
     }
 }
