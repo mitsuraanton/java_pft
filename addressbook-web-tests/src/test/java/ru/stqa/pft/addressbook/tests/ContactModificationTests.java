@@ -23,14 +23,14 @@ public class ContactModificationTests extends TestBase {
     public void ensurePreconditions(){
         app.goTo().gotoHomePage();
         if (! app.contact().isThereAContact()){
-            app.contact().createContact(new ContactData().withFirstname("Test First Name").withLastname("Test Last Name").withPhone("12345678").withGroup("test1"));
+            app.contact().createContact(new ContactData().withFirstname("Test First Name").withLastname("Test Last Name").withHomePhone("12345678").withGroup("test1"));
         }
     }
 
     @Test
     public void testContactModification() {
         Contacts before = app.contact().all();
-        ContactData contact = new ContactData().withFirstname("Test First Name").withLastname("Test Last Name").withPhone("12345678").withGroup("test1");
+        ContactData contact = new ContactData().withFirstname("Test First Name").withLastname("Test Last Name").withHomePhone("12345678").withGroup("test1");
         ContactData modifiedContact = new ContactData();
         for (Iterator<ContactData> i = before.iterator(); i.hasNext();){
             modifiedContact = i.next();
