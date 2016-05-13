@@ -141,10 +141,33 @@ public class ContactHelper extends HelperBase {
         gotoHomePage();
     }
 
+    public ContactData infoFromContactDetailsForm(ContactData contact) {
+        openContactDetailsPage(contact.getId());
+        ContactData contactData = new ContactData();
+        String[] contactInfo = wd.findElement(By.xpath("//div[@id='content']")).getText().split("\n");
+        contactInfo[6] = contactInfo[6].replaceAll("H: ", "");
+        contactInfo[7] = contactInfo[7].replaceAll("M: ", "");
+        contactInfo[8] = contactInfo[8].replaceAll("W: ", "");
+        wd.navigate().back();
+        return contactData.withFirstnameLastname(contactInfo[0]).withNickname(contactInfo[1]).withTitle(contactInfo[2]).withCompany(contactInfo[3])
+                .withAddress(contactInfo[4]).withHomePhone(contactInfo[6]).withMobilePhone(contactInfo[7]).withWorkPhone(contactInfo[8])
+                .withEmail1(contactInfo[10]).withEmail2(contactInfo[11]).withEmail3(contactInfo[12]);
+    }
+
+    private void openContactDetailsPage(int id) {
+        WebElement checkbox = wd.findElement(By.cssSelector(String.format("input[value='%s']", id)));
+        WebElement row = checkbox.findElement(By.xpath("./../.."));
+        List<WebElement> cells = row.findElements(By.tagName("td"));
+        cells.get(6).findElement(By.tagName("a")).click();
+    }
+
     public ContactData infoFromEditForm(ContactData contact) {
         initContactModificationById(contact.getId());
         String firstname = wd.findElement(By.name("firstname")).getAttribute("value");
         String lastname = wd.findElement(By.name("lastname")).getAttribute("value");
+        String nickname = wd.findElement(By.name("nickname")).getAttribute("value");
+        String company = wd.findElement(By.name("company")).getAttribute("value");
+        String title = wd.findElement(By.name("title")).getAttribute("value");
         String home = wd.findElement(By.name("home")).getAttribute("value");
         String mobile = wd.findElement(By.name("mobile")).getAttribute("value");
         String work = wd.findElement(By.name("work")).getAttribute("value");
@@ -153,7 +176,14 @@ public class ContactHelper extends HelperBase {
         String email3 = wd.findElement(By.name("email3")).getAttribute("value");
         String address = wd.findElement(By.name("address")).getAttribute("value");
         wd.navigate().back();
-        return new ContactData().withId(contact.getId()).withFirstname(firstname).withLastname(lastname).withHomePhone(home).withMobilePhone(mobile).withWorkPhone(work).withEmail1(email).withEmail2(email2).withEmail3(email3).withAddress(address);
+        return new ContactData().withId(contact.getId())
+                .withFirstname(firstname).withLastname(lastname)
+                .withNickname(nickname)
+                .withCompany(company)
+                .withTitle(title)
+                .withHomePhone(home).withMobilePhone(mobile).withWorkPhone(work)
+                .withEmail1(email).withEmail2(email2).withEmail3(email3)
+                .withAddress(address);
     }
 
     private void initContactModificationById(int id) {

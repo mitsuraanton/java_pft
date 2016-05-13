@@ -5,6 +5,10 @@ public class ContactData {
     private int id;
     private String firstname;
     private String lastname;
+    private String firstnameLastname;
+    private String nickname;
+    private String title;
+    private String company;
     private String group;
     private String homePhone;
     private String mobilePhone;
@@ -15,6 +19,42 @@ public class ContactData {
     private String Email3;
     private String allEmails;
     private String address;
+
+    public String getCompany() {
+        return company;
+    }
+
+    public ContactData withCompany(String company) {
+        this.company = company;
+        return this;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public ContactData withTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public ContactData withNickname(String nickname) {
+        this.nickname = nickname;
+        return this;
+    }
+
+    public String getFirstnameLastname() {
+        return firstnameLastname;
+    }
+
+    public ContactData withFirstnameLastname(String firstnameLastname) {
+        this.firstnameLastname = firstnameLastname;
+        return this;
+    }
 
     public String getAddress() {
         return address;
