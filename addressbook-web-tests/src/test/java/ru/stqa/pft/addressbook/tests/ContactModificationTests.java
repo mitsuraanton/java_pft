@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import ru.stqa.pft.addressbook.model.ContactData;
 import ru.stqa.pft.addressbook.model.Contacts;
 
+import java.io.File;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -29,15 +30,24 @@ public class ContactModificationTests extends TestBase {
 
     @Test
     public void testContactModification() {
-        Contacts before = app.contact().all();
+        Contacts before = app.db().contacts();
         ContactData contact = new ContactData().withFirstname("Test First Name").withLastname("Test Last Name").withHomePhone("12345678").withGroup("test1");
-        ContactData modifiedContact = new ContactData();
+        ContactData modifiedContact = new ContactData().withFirstname("").withLastname("");
+        boolean isModifySet = false;
         for (Iterator<ContactData> i = before.iterator(); i.hasNext();){
-            modifiedContact = i.next();
+            ContactData currentContact = i.next();
+            if ( (currentContact.getLastname().compareTo(modifiedContact.getLastname()) < 0) || (isModifySet == false) ){
+                modifiedContact = currentContact;
+                isModifySet = true;
+            } else if ((currentContact.getLastname().compareTo(modifiedContact.getLastname()) == 0) && (currentContact.getFirstname().compareTo(modifiedContact.getFirstname()) < 0)){
+                modifiedContact = currentContact;
+            }
         }
         contact = contact.withId(modifiedContact.getId());
+        File photo = new File("src/test/resources/stru.png");
+        contact.withPhoto(photo);
         app.contact().modify(before, contact);
-        Contacts after = app.contact().all();
+        Contacts after = app.db().contacts();
         assertEquals(after.size(), before.size());
 
         assertThat(after, equalTo(before.without(modifiedContact).withAdded(contact)));
