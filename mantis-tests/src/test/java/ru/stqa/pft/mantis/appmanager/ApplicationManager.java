@@ -60,7 +60,7 @@ public class ApplicationManager {
 
     public FtpHelper ftp(){
         if (ftp == null){
-            FtpHelper ftp = new FtpHelper(this);
+            new FtpHelper(this);
         }
         return ftp;
     }
@@ -74,7 +74,6 @@ public class ApplicationManager {
             } else if (browser.equals(BrowserType.IE)){
                 wd = new InternetExplorerDriver();
             }
-            wd = new FirefoxDriver();
             wd.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
             wd.get(properties.getProperty("web.baseUrl"));
         }
